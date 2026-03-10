@@ -1,0 +1,44 @@
+🔐 AUTH
+  POST   /api/v1/auth/register        → Register company + admin user
+  POST   /api/v1/auth/login           → Get JWT tokens
+  POST   /api/v1/auth/refresh         → Refresh access token
+  GET    /api/v1/auth/me              → Get current user
+
+📊 DASHBOARD
+  GET    /api/v1/dashboard            → Full dashboard data + charts
+
+📦 PRODUCTS
+  GET    /api/v1/products             → List products (paginated, searchable)
+  POST   /api/v1/products             → Create product
+  GET    /api/v1/products/{id}        → Get single product
+  PUT    /api/v1/products/{id}        → Update product
+  DELETE /api/v1/products/{id}        → Soft delete product
+
+🏢 WAREHOUSES
+  GET    /api/v1/warehouses           → List warehouses + utilization
+  POST   /api/v1/warehouses           → Create warehouse
+  PUT    /api/v1/warehouses/{id}      → Update warehouse
+  DELETE /api/v1/warehouses/{id}      → Soft delete warehouse
+
+📋 INVENTORY
+  GET    /api/v1/inventory            → List inventory items
+  POST   /api/v1/inventory/stock-in   → Add stock
+  POST   /api/v1/inventory/stock-out  → Remove stock
+  POST   /api/v1/inventory/transfer   → Transfer between warehouses
+  GET    /api/v1/inventory/movements  → Stock movement history
+
+⚠️ ALERTS
+  GET    /api/v1/alerts               → List alerts (filterable)
+  POST   /api/v1/alerts/mark-read     → Mark specific alerts as read
+  POST   /api/v1/alerts/mark-all-read → Mark all alerts as read
+
+📈 REPORTS
+  GET    /api/v1/reports/inventory-valuation  → Inventory value report
+  GET    /api/v1/reports/stock-movement       → Movement log report
+  GET    /api/v1/reports/warehouse-stock      → Per-warehouse stock
+
+🤖 AI (All powered by Groq llama-3.3-70b-versatile)
+  POST   /api/v1/ai/product-description → Generate product copy
+  GET    /api/v1/ai/inventory-insights  → AI inventory analysis
+  POST   /api/v1/ai/chat               → ARIA chat assistant
+  POST   /api/v1/ai/demand-forecast     → Demand forecasting

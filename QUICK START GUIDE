@@ -1,0 +1,56 @@
+# ─── BACKEND SETUP ───────────────────────────────────────
+cd backend
+
+# 1. Create virtual environment
+python -m venv venv
+source venv/bin/activate       # Mac/Linux
+# venv\Scripts\activate        # Windows
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Copy and fill environment variables
+cp .env.example .env
+# Edit .env — fill GROQ_API_KEY, DATABASE_URL, SECRET_KEY
+
+# 4. Start PostgreSQL + Redis via Docker
+docker-compose up -d postgres redis
+
+# 5. Run database migrations
+alembic upgrade head
+# (Or: tables auto-created on first startup via SQLAlchemy)
+
+# 6. Start FastAPI dev server
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# 7. Start Celery worker (separate terminal)
+celery -A app.workers.celery_app worker -l info
+
+# ─── API DOCS ────────────────────────────────────────────
+# Visit: http://localhost:8000/api/docs
+
+# ─── FRONTEND SETUP ──────────────────────────────────────
+cd ../frontend
+
+# 1. Install dependencies
+npm install
+
+# 2. Set environment
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
+
+# 3. Start Next.js dev server
+npm run dev
+# Visit: http://localhost:3000
+
+# ─── PRODUCTION BACKEND ──────────────────────────────────
+cd backend
+docker-compose up -d   # All services: API + Postgres + Redis + Celery
+
+# ─── DEPLOY FRONTEND TO VERCEL ───────────────────────────
+cd frontend
+npx vercel --prod
+
+.\venv\Scripts\uvicorn.exe app.main:app --host 0.0.0.0 --port 8000 --reload
+
+
+npm run dev
