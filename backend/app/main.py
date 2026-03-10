@@ -1,13 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 from app.config import settings
 from app.database import engine, Base
 from app.api.v1 import auth, products, warehouses, inventory, dashboard, alerts, reports, ai
+import logging
 
-# Create tables
-Base.metadata.create_all(bind=engine)
+logger = logging.getLogger("uvicorn.error")
 
-app = FastAPI(title=settings.APP_NAME, version=settings.APP_VERSION)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Create tables on startup — gracefully handle DB unavailability
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables created/verified successfully.")
+    except Exception as e:
+        logger.error(f"Database connection failed at startup: {e}")
+        logger.warning("App will start without DB — endpoints may fail until DB is reachable.")
+    yield
+
+app = FastAPI(title=settings.APP_NAME, version=settings.APP_VERSION, lifespan=lifespan)
 
 origins = []
 if isinstance(settings.ALLOWED_ORIGINS, str):
